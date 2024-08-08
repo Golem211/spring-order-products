@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Customer;
 import com.example.demo.model.Supplier;
 
 import java.util.List;
@@ -14,4 +13,5 @@ public interface SupplierService {
 
     void deleteById(int id);
 
+    
 }
