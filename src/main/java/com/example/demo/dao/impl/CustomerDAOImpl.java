@@ -1,5 +1,6 @@
-package com.example.demo.dao;
+package com.example.demo.dao.impl;
 
+import com.example.demo.dao.CustomerDAO;
 import com.example.demo.model.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;

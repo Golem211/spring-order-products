@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.Customer;
 import com.example.demo.service.CustomerService;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,8 @@ public class CustomerRestController {
 
     @PostMapping
     @Transactional
-    public Customer save(@RequestBody Customer customerToSave) {
+    public Customer save(@Valid @RequestBody Customer customerToSave) {
+
         return customerService.save(customerToSave);
     }
 

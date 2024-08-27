@@ -1,13 +1,16 @@
-package com.example.demo.service;
+package com.example.demo.service.impl;
 
 import com.example.demo.dao.CustomerDAO;
 import com.example.demo.model.Customer;
+import com.example.demo.service.CustomerService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerDAO customerDAO;
 
@@ -27,6 +30,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public Customer save(Customer customer) {
         return customerDAO.save(customer);
     }
