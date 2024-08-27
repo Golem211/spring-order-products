@@ -27,6 +27,15 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
+    public Product findByName(String name) {
+        TypedQuery<Product> query = entityManager.createQuery("from Product p where p.name = :name", Product.class);
+        query.setParameter( "name" , name);
+
+        return query.getSingleResult();
+    }
+
+
+    @Override
     public Product save(Product productToSave) {
         return entityManager.merge(productToSave);
     }
