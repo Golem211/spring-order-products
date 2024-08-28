@@ -1,16 +1,13 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 @Getter
 @Setter
 @Table(name = "ORDERS")
@@ -24,9 +21,9 @@ public class Order {
     @Column
     private Integer orderNumber;
 
-    @Column
     @OneToMany(mappedBy = "order")
-    private Set<OrderProduct> orderProductSet;
+    //@JoinColumn(name = "order_id", referencedColumnName = "id")
+    private List<OrderProduct> orderProductSet;
 
     @Column
     private BigDecimal totalPrice;

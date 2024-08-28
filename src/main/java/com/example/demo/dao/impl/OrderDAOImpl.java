@@ -35,12 +35,13 @@ public class OrderDAOImpl implements OrdersDAO {
 
     @Override
     public Order findByOrderNo(int orderNo) {
-        TypedQuery<Order> customerQuery = entityManager.createQuery("from Order O " +
-                "inner join fetch O.orderProductSet op " +
-                "inner join fetch op.product" +
-                " where O.orderNumber = : orderNumber", Order.class);
+        TypedQuery<Order> customerQuery = entityManager.createQuery("SELECT O " +
+                " from Order O " +
+                " join fetch O.orderProductSet op " +
+                " join fetch op.product" +
+                " where O.orderNumber = :orderNumber", Order.class);
         customerQuery.setParameter("orderNumber", orderNo);
-        return customerQuery.getSingleResult();
+        return customerQuery.getResultList().stream().findFirst().get();
     }
 
     @Override

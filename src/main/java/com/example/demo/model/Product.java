@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,8 +20,8 @@ public class Product {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @OneToMany(mappedBy = "product")
-    private Set<OrderProduct> orderProductSet;
+    //@OneToMany(mappedBy = "product")
+    //private List<OrderProduct> orderProductSet = new ArrayList<>();
 
 
     @Column
