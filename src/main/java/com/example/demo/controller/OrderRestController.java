@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Order;
 import com.example.demo.model.dto.OrderDTO;
+import com.example.demo.model.dto.OrderProductDTO;
 import com.example.demo.service.OrderService;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -27,7 +28,7 @@ public class OrderRestController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity<Order> save(@Valid @RequestBody OrderDTO order) {
+    public ResponseEntity<List<OrderProductDTO>> save(@Valid @RequestBody OrderDTO order) {
 
         return new ResponseEntity<>(orderService.save(order), HttpStatus.CREATED);
     }

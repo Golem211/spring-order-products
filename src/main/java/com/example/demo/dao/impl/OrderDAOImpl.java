@@ -5,8 +5,10 @@ import com.example.demo.model.Order;
 import com.example.demo.model.OrderProduct;
 import com.example.demo.model.Product;
 import com.example.demo.model.dto.OrderDTO;
+import com.example.demo.model.dto.OrderProductDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,17 +36,19 @@ public class OrderDAOImpl implements OrdersDAO {
     }
 
     @Override
-    public Order findByOrderNo(int orderNo) {
-        TypedQuery<Order> customerQuery = entityManager.createQuery("SELECT O " +
-                " from Order O " +
-                " join fetch O.orderProductSet op " +
-                " join fetch op.product" +
-                " where O.orderNumber = :orderNumber", Order.class);
+    public List<OrderProductDTO> findByOrderNo(int orderNo) {
+        TypedQuery<OrderProductDTO> customerQuery = entityManager.createQuery("SELECT new com.example.demo.model.dto.OrderProductDTO(o.orderNumber, p.name, op.numberOfProducts) " +
+                " from Order o " +
+                " join o.orderProductSet op " +
+                " join op.product p" +
+                " where o.orderNumber = :orderNumber", OrderProductDTO.class);
         customerQuery.setParameter("orderNumber", orderNo);
-        return customerQuery.getResultList().stream().findFirst().get();
+        return customerQuery.getResultList();
     }
 
+    @Transactional(Transactional.TxType.REQUIRES_NEW)
     @Override
+
     public Order createOrder(OrderDTO orderDTO) {
         Order order = new Order();
         order.setOrderNumber(orderDTO.getOrderNumber());

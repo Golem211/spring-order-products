@@ -3,22 +3,25 @@ package com.example.demo.service.impl;
 import com.example.demo.dao.OrdersDAO;
 import com.example.demo.model.Order;
 import com.example.demo.model.dto.OrderDTO;
+import com.example.demo.model.dto.OrderProductDTO;
 import com.example.demo.service.OrderProductService;
 import com.example.demo.service.OrderService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @EnableAsync
 public class OrderServiceImpl implements OrderService {
-    private OrdersDAO orderDAO;
+    private final OrdersDAO orderDAO;
 
 
-    private OrderProductService orderProductService;
+    private final OrderProductService orderProductService;
 
 
     @Autowired
@@ -38,13 +41,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    @Transactional
-    public Order save(OrderDTO order) {
+    public List<OrderProductDTO> save(OrderDTO order) {
         Order order1 = orderDAO.createOrder(order);
-        order.getProducts().forEach((key, value) -> orderProductService.createOrderProduct(order1, key, value));
-        Order order2 = orderDAO.findByOrderNo(order.getOrderNumber());
-        System.out.println(order2.getOrderProductSet());
-        return order2;
+        AtomicReference<BigDecimal> orderValue = new AtomicReference<>(BigDecimal.ZERO);
+        order.getProducts().entrySet().stream()
+                .map(entry -> orderProductService.createOrderProduct(order1, entry.getKey(), entry.getValue()))
+                .forEach(future -> orderValue.updateAndGet(v -> {
+                    try {
+                        return v.add(future.get().getProduct().getPrice()
+                                .multiply(BigDecimal.valueOf(future.get().getNumberOfProducts())));
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+        System.out.println(orderValue.get());
+
+        return orderDAO.findByOrderNo(order.getOrderNumber());
     }
 
     @Override

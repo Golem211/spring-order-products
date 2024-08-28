@@ -8,16 +8,20 @@ import com.example.demo.model.Product;
 import com.example.demo.service.OrderProductService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.Future;
 
 @EnableAsync
 @Service
 public class OrderProductServiceImpl implements OrderProductService {
 
-    private OrdersDAO orderDAO;
+    private final OrdersDAO orderDAO;
 
-    private ProductDAO productDAO;
+    private final ProductDAO productDAO;
 
 
     @Autowired
@@ -27,9 +31,9 @@ public class OrderProductServiceImpl implements OrderProductService {
     }
 
     @Override
-    //@Async
+    @Async
     @Transactional
-    public void createOrderProduct(Order order, String productName, int noOfProducts) {
+    public Future<OrderProduct> createOrderProduct(Order order, String productName, int noOfProducts) {
 
         Product product = productDAO.findByName(productName);
 
@@ -37,7 +41,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 
         product.decreaseStock(noOfProducts);
         productDAO.save(product);
-
+        return new AsyncResult<>(orderProduct);
     }
 
 
